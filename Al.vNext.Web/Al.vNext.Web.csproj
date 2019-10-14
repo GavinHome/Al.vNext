@@ -17,7 +17,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Al.vNext.Core\Al.vNext.Core.csproj" />
+    <ProjectReference Include="..\Al.vNext.Database.Contracts\Al.vNext.Database.Contracts.csproj" />
+    <ProjectReference Include="..\Al.vNext.DataBase.Implement\Al.vNext.DataBase.Implement.csproj" />
+    <ProjectReference Include="..\Al.vNext.Services.Contracts\Al.vNext.Services.Contracts.csproj" />
+    <ProjectReference Include="..\Al.vNext.Services.Implement\Al.vNext.Services.Implement.csproj" />
+    <ProjectReference Include="..\Al.vNext.Web.Common\Al.vNext.Web.Common.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

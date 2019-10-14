@@ -4,4 +4,9 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Al.vNext.Core\Al.vNext.Core.csproj" />
+    <ProjectReference Include="..\Al.vNext.ViewModel\Al.vNext.ViewModel.csproj" />
+  </ItemGroup>
+
 </Project>

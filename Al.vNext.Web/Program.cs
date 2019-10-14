@@ -21,6 +21,10 @@ namespace Al.vNext.Web
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddProvider(new Common.Log4NetExtensions.Log4NetProvider("log4net.config"));
                 });
     }
 }

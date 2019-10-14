@@ -1,7 +1,25 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Core" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.5.0" />
+    <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2018.1.503" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Al.vNext.Core\Al.vNext.Core.csproj" />
+    <ProjectReference Include="..\Al.vNext.Model\Al.vNext.Model.csproj" />
+    <ProjectReference Include="..\Al.vNext.Services.Contracts\Al.vNext.Services.Contracts.csproj" />
+  </ItemGroup>
 
 </Project>

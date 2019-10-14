@@ -4,4 +4,9 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Al.vNext.Database.Contracts\Al.vNext.Database.Contracts.csproj" />
+    <ProjectReference Include="..\Al.vNext.Services.Contracts\Al.vNext.Services.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>
