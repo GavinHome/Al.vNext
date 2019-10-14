@@ -1,2 +1,2 @@
 # Al.vNext
-A web rapid development scaffold based on .NETCORE 3.0 and Vue cli3
+A web rapid development scaffold based on .AspNetCore3.0 and Vue CLI3
