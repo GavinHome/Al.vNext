@@ -28,6 +28,8 @@ namespace Al.vNext.Web.Controllers
         [Route("[action]")]
         public async Task<ActionResult<string>> Get(long id)
         {
+            var zero = 0;
+            var d = 1 / zero;
             return "success";
         }
 

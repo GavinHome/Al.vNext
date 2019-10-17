@@ -101,6 +101,10 @@ namespace Al.vNext.Web.Common.Log4NetExtensions
                         break;
                     case LogLevel.Error:
                         _log.Error(message);
+                        if(exception != null)
+                        {
+                            _log.Error(exception);
+                        }
                         break;
                     case LogLevel.Information:
                         _log.Info(message);
