@@ -333,3 +333,4 @@ ASALocalRun/
 
 # Vue
 **/ClientApp/dist
+**/App/dist

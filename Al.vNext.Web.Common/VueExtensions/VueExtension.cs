@@ -1,4 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿//-----------------------------------------------------------------------------------
+// <copyright file="VueExtension.cs" company="Al.vNext">
+//     Copyright Al.vNext. All rights reserved.
+// </copyright>
+// <author>??</author>
+// <date>2019/10/14 11:12:51</date>
+// <description></description>
+//-----------------------------------------------------------------------------------
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,18 +19,25 @@ using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace Al.vNext.Web.VueExtension
+namespace Al.vNext.Web.Common.VueExtension
 {
     public static class VueExtension
     {
         // default port number of 'npm run serve'
-        private static int Port { get; } = 8080;
+        private static int Port { get; } = 8081;
         private static Uri DevelopmentServerEndpoint { get; } = new Uri($"http://localhost:{Port}");
         private static TimeSpan Timeout { get; } = TimeSpan.FromSeconds(30);
         // done message of 'npm run serve' command.
         private static string DoneMessage { get; } = "DONE  Compiled successfully in";
+        // default app dir
+        private static string AppDefaultWorkingDirectory = "ClientApp";
 
         public static void UseVueDevelopmentServer(this ISpaBuilder spa)
+        {
+            UseVueDevelopmentServer(spa, AppDefaultWorkingDirectory);
+        }
+
+        public static void UseVueDevelopmentServer(this ISpaBuilder spa, string appWorkingDirectory)
         {
             spa.UseProxyToSpaDevelopmentServer(async () =>
             {
@@ -39,7 +55,7 @@ namespace Al.vNext.Web.VueExtension
                 {
                     FileName = isWindows ? "cmd" : "npm",
                     Arguments = $"{(isWindows ? "/c npm " : "")}run serve",
-                    WorkingDirectory = "ClientApp",
+                    WorkingDirectory = appWorkingDirectory,
                     RedirectStandardError = true,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
@@ -92,7 +108,6 @@ namespace Al.vNext.Web.VueExtension
 
                 return DevelopmentServerEndpoint;
             });
-
         }
 
         private static bool IsRunning() => IPGlobalProperties.GetIPGlobalProperties()

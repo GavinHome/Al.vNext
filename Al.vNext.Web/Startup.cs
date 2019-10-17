@@ -20,7 +20,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Al.vNext.Web.Common.Middleware;
 using Al.vNext.Model.Context;
@@ -28,12 +27,15 @@ using Al.vNext.Web.Common;
 using Al.vNext.Web.Common.Filters;
 using Al.vNext.Web.Common.KendoExtensions;
 using Al.vNext.Web.PermissionExtensions;
-using Al.vNext.Web.VueExtension;
+using Al.vNext.Web.Common.VueExtension;
 
 namespace Al.vNext.Web
 {
     public partial class Startup
     {
+        //App: vue-cli4, ClientApp: vue-cli3
+        private static string DefaultAppDir = "App";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -46,7 +48,7 @@ namespace Al.vNext.Web
         {
             services.AddControllersWithViews();
             ////add spa static files
-            services.AddSpaStaticFiles(options => options.RootPath = "ClientApp/dist");
+            services.AddSpaStaticFiles(options => options.RootPath = $"{DefaultAppDir}/dist");
 
             ////add spa static files
             services.AddResponseCompression(options =>
@@ -63,7 +65,7 @@ namespace Al.vNext.Web
 
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.UseRowNumberForPaging());
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.UseRowNumberForPaging()).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             ////add MongoDbContext
@@ -71,8 +73,6 @@ namespace Al.vNext.Web
             {
                 options.UseMongoServer(Configuration.GetConnectionString("MongodbConnection"));
             });
-
-            services.AddOData();
 
             ////add business services
             services.ConfigureBusinessServices();
@@ -86,6 +86,9 @@ namespace Al.vNext.Web
             ////add authorize handler
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
+            ////add odata: not supported
+            ////services.AddOData();
+
             ////Maintain property names during serialization. See:https://github.com/aspnet/Announcements/issues/194
             services.AddMvc(options =>
             {
@@ -93,8 +96,8 @@ namespace Al.vNext.Web
                 options.Filters.AddService<AsyncActionFilter>();
             });
 
-            ////add kendo
-            services.AddKendo();
+            ////add kendo: not supported
+            ////services.AddKendo();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -136,11 +139,11 @@ namespace Al.vNext.Web
 
             app.UseSpa(spa =>
             {
-                spa.Options.SourcePath = "ClientApp";
+                spa.Options.SourcePath = DefaultAppDir;
                 if (env.IsDevelopment())
                 {
                     // Launch development server for Vue.js
-                    spa.UseVueDevelopmentServer();
+                    spa.UseVueDevelopmentServer(DefaultAppDir);
                 }
             });
 
@@ -149,6 +152,9 @@ namespace Al.vNext.Web
 
             ////use global exception handling middleware
             app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+            ////add odata: not supported
+            ////app.UseOData("ODataRoute", "odata", AppDbContext.GetEdmModel(app.ApplicationServices));
         }
 
         private string[] GetMimeTypes()
