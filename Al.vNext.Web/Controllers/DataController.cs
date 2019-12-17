@@ -3,6 +3,7 @@ using Al.vNext.Model;
 using Al.vNext.Model.Context;
 using Al.vNext.Services.Contracts;
 using Al.vNext.Services.Implement;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,13 @@ namespace Al.vNext.Web.Controllers
     {
         private readonly IAccountService _accountService;
         private readonly AppDbContext _dbcontext;
-        public DataController(IAccountService accountService, AppDbContext dbcontext)
+        private readonly IPublishService _publishService;
+
+        public DataController(IAccountService accountService, AppDbContext dbcontext, IPublishService publishService)
         {
             _accountService = accountService;
             _dbcontext = dbcontext;
+            _publishService = publishService;
         }
 
         [HttpGet]
@@ -40,5 +44,32 @@ namespace Al.vNext.Web.Controllers
         ////    var codes = _dbcontext.AsQueryable<Code>().FirstOrDefault();
         ////    return _accountService.Auth("20146348", "1", false, string.Empty);
         ////}
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<ActionResult<bool>> SendMessage()
+        {
+            var result = await _publishService.Send<SubmitOrder>(new SubmitOrder { OrderId = Guid.NewGuid().ToString(), OrderDate = DateTime.Now, OrderAmount = 1000 }, "submit-order");
+            return new ActionResult<bool>(result);
+        }
+    }
+
+    public class SubmitOrder
+    {
+        public string OrderId { get; set; }
+        public DateTime OrderDate { get; set; }
+        public decimal OrderAmount { get; set; }
+    }
+
+    public class SubmitOrderConsumer : IConsumer<SubmitOrder>
+    {
+        public async Task Consume(ConsumeContext<SubmitOrder> context)
+        {
+            await Console.Out.WriteLineAsync($"Updating customer: {context.Message.OrderDate}");
+
+            await context.Redeliver(new TimeSpan(100));
+
+            // update the customer address
+        }
     }
 }

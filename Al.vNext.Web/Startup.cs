@@ -21,6 +21,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using MassTransit.AspNetCoreIntegration;
+using Microsoft.Extensions.Logging;
 using Al.vNext.Web.Common.Middleware;
 using Al.vNext.Model.Context;
 using Al.vNext.Web.Common;
@@ -28,6 +31,8 @@ using Al.vNext.Web.Common.Filters;
 using Al.vNext.Web.Common.KendoExtensions;
 using Al.vNext.Web.PermissionExtensions;
 using Al.vNext.Web.Common.VueExtension;
+using MassTransit;
+using GreenPipes;
 
 namespace Al.vNext.Web
 {
@@ -46,6 +51,9 @@ namespace Al.vNext.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ////add health check services
+            services.AddHealthChecks();
+
             services.AddControllersWithViews();
             ////add spa static files
             services.AddSpaStaticFiles(options => options.RootPath = $"{DefaultAppDir}/dist");
@@ -98,6 +106,9 @@ namespace Al.vNext.Web
 
             ////add kendo: not supported
             ////services.AddKendo();
+
+            ////Register MassTransit. Here we need to send the logger factory.
+            services.AddMassTransit(ConfigureBus(), null);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -155,6 +166,8 @@ namespace Al.vNext.Web
 
             ////add odata: not supported
             ////app.UseOData("ODataRoute", "odata", AppDbContext.GetEdmModel(app.ApplicationServices));
+
+            app.UseHealthChecks("/health", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") });
         }
 
         private string[] GetMimeTypes()
@@ -162,5 +175,17 @@ namespace Al.vNext.Web
             var mimeTypes = Configuration.GetSection("MimeTypes").Value;
             return !string.IsNullOrEmpty(mimeTypes) ? mimeTypes.Split(",") : Array.Empty<string>();
         }
+
+        IBusControl ConfigureBus() => Bus.Factory.CreateUsingRabbitMq(cfg =>
+        {
+            cfg.Host("localhost");
+
+            cfg.ReceiveEndpoint("submit-order", ep =>
+            {
+                ep.PrefetchCount = 2;
+                ep.UseMessageRetry(x => x.Interval(20, 100));
+                ep.Consumer(() => new Controllers.SubmitOrderConsumer());
+            });
+        });
     }
 }
